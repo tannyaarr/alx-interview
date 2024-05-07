@@ -1,0 +1,12 @@
+{
+	"folders": [
+		{
+			"path": "../../alx-frontend"
+		},
+		{
+			"name": "alx-interview",
+			"path": ".."
+		}
+	],
+	"settings": {}
+}
