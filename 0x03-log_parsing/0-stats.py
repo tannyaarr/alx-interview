@@ -21,7 +21,9 @@ status_code_counts = {
 line_count = 0
 
 # Regular expression to match the log line format
-log_pattern = re.compile(r'^(\S+) - \[(.*?)\] "GET /projects/260 HTTP/1.1" (\d{3}) (\d+)$')
+log_pattern = re.compile(
+    r'^(\S+) - \[(.*?)\] "GET /projects/260 HTTP/1.1" (\d{3}) (\d+)$')
+
 
 def print_statistics():
     """Prints the statistics of total file size and status code counts."""
@@ -31,10 +33,13 @@ def print_statistics():
         if status_code_counts[code] > 0:
             print(f"{code}: {status_code_counts[code]}")
 
+
 def signal_handler(sig, frame):
-    """Handles the SIGINT signal (CTRL + C) to print statistics before exiting."""
+    """Handles the SIGINT signal (CTRL + C)
+    to print statistics before exiting."""
     print_statistics()
     sys.exit(0)
+
 
 # Register the signal handler for SIGINT (CTRL + C)
 signal.signal(signal.SIGINT, signal_handler)
@@ -47,11 +52,12 @@ try:
             # Extract status code and file size from the matched groups
             status_code = int(match.group(3))
             file_size = int(match.group(4))
-            
+
             # Update total file size
             total_size += file_size
-            
-            # Update the count for the status code if it's one of the expected codes
+
+            # Update the count for the status code if it's one of the expected
+            # codes
             if status_code in status_code_counts:
                 status_code_counts[status_code] += 1
 
