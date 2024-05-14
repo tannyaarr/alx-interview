@@ -3,49 +3,32 @@
 
 
 import sys
-import signal
 
-total_file_size = 0
-status_code_counts = {200: 0, 301: 0, 400: 0, 401: 0, 403: 0, 404: 0, 405: 0,
-                      500: 0}
-line_count = 0
-
-
-def signal_handler(sig, frame):
-    print_statistics()
-    sys.exit(0)
-
-
-def print_statistics():
-    global total_file_size
-    global status_code_counts
-
-    print("Total file size:", total_file_size)
-    for status_code in sorted(status_code_counts.keys()):
-        if status_code_counts[status_code] > 0:
-            print(f"{status_code}: {status_code_counts[status_code]}")
-
-
-signal.signal(signal.SIGINT, signal_handler)
-
-for line in sys.stdin:
-    line = line.strip()
-
-    parts = line.split()
-    if len(parts) != 7:
-        continue
-    ip_address, _, _, status_code_str, file_size_str = parts
+def parse_line(line):
     try:
-        status_code = int(status_code_str)
-        file_size = int(file_size_str)
+        _, _, _, _, status_code, file_size, = line.split()
+        return int(status_code), int(file_size)
     except ValueError:
-        continue
+        return None, None
+    
+def main():
+    total_size = 0
+    status_counts = {}
 
-    total_file_size += file_size
-    if status_code in status_code_counts:
-        status_code_counts[status_code] += 1
+    try:
+        for i, line in enumerate(sys.stdin, start=1):
+            status_code, file_size = parse_line(line)
+            if status_code is not None:
+                total_size += file_size
+                status_counts[status_code] = status_counts.get(status_code, 0) + 1
 
-    line_count += 1
+            if i %10 == 0:
+                print(f"Total file size: {total_size}")
+                for code in sorted(status_counts.keys()):
+                    print(f"{code}: {status_counts[code]}")
 
-    if line_count % 10 == 0:
-        print_statistic()
+    except KeyboardInterrupt:
+        pass
+
+if __name__ == "__main__":
+    main()
