@@ -4,24 +4,24 @@ a valid UTF-8 encoding"""
 
 
 def validUTF8(data):
-    num_bytes = 0
+    i = 0
+    while i < len(data):
+        if data[i] < 128:
+            i += 1
+        else:
 
-    for num in data:
-        if num_bytes == 0:
-            mask = 1 << 7
-            while mask & num:
-                num_bytes += 1
-                mask >> 1
+            if data[i] >> 5 == 6:
+                num_bytes = 2
+            elif data[i] >> 4 == 14:
+                num_bytes = 3
+            elif data[i] >> 3 == 30:
+                num_bytes = 4
+            else:
+                return False
 
-                if num_bytes == 0:
-                    continue
-
-                if num_bytes == 1 or num_bytes > 4:
+            for j in range(1, num_bytes):
+                if i + j >= len(data) or data[i + j] >> 6 != 2:
                     return False
-                else:
-                    if not (num >> 6 == 0b10):
-                        return False
+            i += num_bytes
 
-                num_bytes -= 1
-
-        return num_bytes == 0
+    return True
