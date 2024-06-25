@@ -8,17 +8,15 @@ def island_perimeter(grid):
     
     rows = len(grid)
     cols = len(grid[0])
-    land_cells = 0
-    shared_edges = 0
+    perimeter = 0
     
     for r in range(rows):
         for c in range(cols):
             if grid[r][c] == 1:
-                land_cells += 1
-                if c < cols - 1 and grid[r][c + 1] == 1:
-                    shared_edges += 1
+                perimeter += 4
                 if r < rows - 1 and grid[r + 1][c] == 1:
-                    shared_edges += 1
-    
-    perimeter = 4 * land_cells - 2 * shared_edges
+                    perimeter -= 2
+                if c < cols - 1 and grid[r][c + 1] == 1:
+                    perimeter -= 2
+                    
     return perimeter
